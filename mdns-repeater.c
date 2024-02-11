@@ -40,6 +40,7 @@
 #include <poll.h>
 
 #include "list.h"
+#include "dns.h"
 
 #define PACKAGE "mdns-repeater"
 #define MDNS_ADDR4 "224.0.0.251"
@@ -1079,6 +1080,8 @@ recv_packet6(struct recv_sock *recv_sock)
 	if (!pktinfo)
 		return;
 
+	parse_dns(recv_sock->pkt_data, recv_sock->pkt_size);
+
 	if (!inet_ntop(AF_INET6,
 		       &recv_sock->from.sin6.sin6_addr,
 		       recv_sock->from_str,
@@ -1099,6 +1102,8 @@ recv_packet4(struct recv_sock *recv_sock)
 				       &sockaddr_size);
 	if (recv_sock->pkt_size < 0)
 		return;
+
+	parse_dns(recv_sock->pkt_data, recv_sock->pkt_size);
 
 	if (!inet_ntop(AF_INET,
 		       &recv_sock->from.sin.sin_addr,
